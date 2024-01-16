@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Код</title>
+    <style>
+        body {
+            background-color: black;
+            color: green;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .number-slots {
+            display: grid;
+            grid-template-columns: repeat(8, 80px);
+            gap: 20px;
+        }
+
+        .number-slot {
+            width: 80px;
+            height: 80px;
+            font-size: 32px;
+            border: 4px solid green;
+            border-radius: 8px;
+            background-color: black;
+            color: green;
+            text-align: center;
+            line-height: 80px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .active {
+            background-color: green;
+            color: black;
+        }
+
+        .button {
+            width: 200px;
+            background-color: green;
+            color: black;
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+#modal2 {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .modal-content {
+            background-color: black;
+            color: green;
+            padding: 40px;
+            border-radius: 8px;
+        }
+
+        #closeButton {
+            background-color: green;
+            color: black;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Въведете кода тук:</h1>
+
+    <div class="number-slots" id="numberSlots">
+        <div class="number-slot" contenteditable="true" tabindex="0"></div>
+        <div class="number-slot" contenteditable="true"></div>
+        <div class="number-slot" contenteditable="true"></div>
+        <div class="number-slot" contenteditable="true"></div>
+        <div class="number-slot" contenteditable="true"></div>
+	<div class="number-slot" contenteditable="true"></div>
+        <div class="number-slot" contenteditable="true"></div>
+        <div class="number-slot" contenteditable="true"></div>
+    </div>
+
+    <button id="validateButton" class="button" onclick="validateAndDisplayModal()">Потвърди</button>
+
+    <div id="modal">
+        <div class="modal-content">
+            <p>Сървърът е деактивиран!</p>
+            <button class="button" id="closeButton" onclick="closeModal()">Затвори</button>
+        </div>
+    </div>
+
+    <div id="modal2">
+        <div class="modal-content">
+            <p>Кодът е грешен, моля опитайте пак!</p>
+            <button class="button" id="closeButton2" onclick="closeModal2()">Затвори</button>
+        </div>
+    </div>
+
+    <script>
+        const slots = document.querySelectorAll('.number-slot');
+        let currentIndex = 0;
+        const validNumbers = [7, 3, 0, 6, 7, 4, 3, 8]; // Example array of valid numbers
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowRight' && currentIndex < slots.length - 1) {
+                moveFocus(1);
+            } else if (event.key === 'ArrowLeft' && currentIndex > 0) {
+                moveFocus(-1);
+            } else if (event.key === 'Enter') {
+                checkNumberValidity();
+            }
+        });
+
+        function moveFocus(direction) {
+            slots[currentIndex].classList.remove('active');
+            currentIndex += direction;
+            slots[currentIndex].focus();
+            slots[currentIndex].classList.add('active');
+        }
+
+        function checkNumberValidity() {
+            const numberSlots = document.querySelectorAll('.number-slot');
+            const numbers = Array.from(numberSlots, element => parseInt(element.innerText.trim()));
+
+            if (arraysAreEqual(numbers, validNumbers)) {
+                document.getElementById('modal').style.display = 'flex';
+            } else {
+                document.getElementById('modal2').style.display = 'flex';
+            }
+        }
+
+	function arraysAreEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+        function validateAndDisplayModal() {
+            checkNumberValidity();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+	location.reload();
+        }
+
+	function closeModal2() {
+            document.getElementById('modal2').style.display = 'none';
+location.reload();
+        }
+
+        slots.forEach((slot, index) => {
+            slot.addEventListener('focus', () => {
+                currentIndex = index;
+                slots.forEach(s => s.classList.remove('active'));
+                slot.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
